@@ -10,7 +10,7 @@ A personal website about quantitative finance, AI-native engineering, and buildi
 
 ## Resume
 
-[Download the Citi AI Engineer resume (PDF)](resumes/Zhenyu_Xiao_Citi_AI_Engineer_Resume.pdf)
+[Read the Citi AI Engineer resume (Markdown)](resumes/Zhenyu_Xiao_Citi_AI_Engineer_Resume.md)
 
 ## Local preview
 
