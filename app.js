@@ -3,6 +3,34 @@
   const $ = s => document.querySelector(s);
   const $$ = s => [...document.querySelectorAll(s)];
   const money = n => (n < 0 ? '−' : '') + '$' + Math.abs(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if ($('#hero-curve')) {
+    const box=$('#hero-curve'),readout=$('#curve-readout');
+    const scenarios=[['P400',4,'#d3ebc6'],['P200',2,'#a9cbb2'],['P100',1,'#7fa592'],['BASE',0,'#e2c68e'],['M100',-1,'#b9846c'],['M200',-2,'#d98f6a'],['M400',-4,'#f0a67e']];
+    const order=['BASE','P100','P200','P400','M100','M200','M400'];
+    const base=yrs=>3.3+1.3*(1-Math.exp(-yrs/4)),MAX=9;let hot=0;
+    function highlight(){const id=order[hot],s=scenarios.find(x=>x[0]===id);$$('#hero-curve .hot').forEach(e=>e.classList.remove('hot'));$$(`#hero-curve [data-id="${id}"]`).forEach(e=>e.classList.add('hot'));readout.textContent=s[1]?`${id} · ${s[1]>0?'+':'−'}${Math.abs(s[1])*100} bp`:'BASE · no shock';readout.style.color=s[2];}
+    function draw(){
+      const W=box.clientWidth,H=box.clientHeight,L=34,R=54,T=10,B=26,x=u=>L+u*(W-L-R),y=r=>T+(MAX-r)/MAX*(H-T-B);let g='';
+      [0,3,6,9].forEach(r=>{g+=`<line x1="${L}" x2="${W-R}" y1="${y(r)}" y2="${y(r)}" stroke="#ffffff${r?'14':'33'}" ${r?'':'stroke-dasharray="3 4"'}/><text x="${L-8}" y="${y(r)+4}" text-anchor="end">${r}%</text>`;});
+      [['3M',.25],['1Y',1],['5Y',5],['10Y',10],['30Y',30]].forEach(([l,yrs])=>{g+=`<text x="${x(Math.sqrt(yrs/30))}" y="${H-4}" text-anchor="middle">${l}</text>`;});
+      const curves=scenarios.map(([id,s,c])=>{let d='';for(let i=0;i<=80;i++){const u=i/80,r=Math.max(0,base(30*u*u)+s);d+=`${i?'L':'M'}${x(u).toFixed(1)},${y(r).toFixed(1)} `;}const end=y(Math.max(0,base(30)+s));return `<path class="curve${s?'':' base'}" data-id="${id}" d="${d}" pathLength="1000" stroke="${c}" style="animation-delay:${Math.abs(s)*120}ms"/><text class="curve-label" data-id="${id}" x="${W-R+8}" y="${end+4}" style="fill:${c}">${id}</text>`;}).join('');
+      box.innerHTML=`<svg viewBox="0 0 ${W} ${H}" aria-hidden="true">${g}${curves}<text x="${W-R}" y="${y(0)-6}" text-anchor="end">0% floor</text></svg>`;if(box.classList.contains('cycling'))highlight();
+    }
+    draw();highlight();let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{box.classList.add('drawn');draw();},150);});
+    if(!reduce)setTimeout(()=>{box.classList.add('cycling');highlight();setInterval(()=>{if(!document.hidden){hot=(hot+1)%order.length;highlight();}},1800);},1900);
+  }
+  if ($('[data-count]') && !reduce && 'IntersectionObserver' in window) {
+    const io=new IntersectionObserver(entries=>entries.forEach(en=>{if(!en.isIntersecting)return;io.unobserve(en.target);const el=en.target,end=+el.dataset.count,dec=+(el.dataset.dec||0),pre=el.dataset.prefix||'',suf=el.dataset.suffix||'',t0=performance.now();const f=now=>{const p=Math.min(1,(now-t0)/1500),e=1-Math.pow(1-p,3);el.textContent=pre+(end*e).toFixed(dec)+suf;if(p<1)requestAnimationFrame(f);};requestAnimationFrame(f);}),{threshold:.6});$$('[data-count]').forEach(el=>io.observe(el));
+  }
+  if ($('#validation-matrix') && window.ENGINE_DATA) {
+    const labels={'0':'< 0.001% deviation','1':'< 0.01% deviation','2':'≤ 0.1% deviation','3':'Within absolute / per-leg tolerance','z':'No rate exposure in this view'};
+    const matrix=$('#validation-matrix'),readout=$('#matrix-readout');
+    matrix.innerHTML=window.ENGINE_DATA.lanes.map(([name,cells],l)=>`<div class="lane"><span>${name}</span><div class="cells">${[...cells].map((c,i)=>`<i class="c${c}" tabindex="${i===0?'0':'-1'}" role="button" aria-label="${name}, contract type ${i+1}: ${labels[c].replace('<','less than')}" style="--i:${i}" data-l="${l}" data-k="${c}" data-n="${i+1}"></i>`).join('')}</div></div>`).join('');
+    const inspect=e=>{const c=e.target.closest('i[data-k]');if(!c)return;$$('#validation-matrix i.on').forEach(x=>x.classList.remove('on'));c.classList.add('on');readout.textContent=`${window.ENGINE_DATA.lanes[c.dataset.l][0]} · Contract type ${String(c.dataset.n).padStart(2,'0')} · ${labels[c.dataset.k]}`;};
+    ['pointerover','focusin','click'].forEach(type=>matrix.addEventListener(type,inspect));
+    matrix.addEventListener('keydown',e=>{const cell=e.target.closest('i[data-k]');if(!cell)return;const step={ArrowRight:1,ArrowLeft:-1,ArrowDown:89,ArrowUp:-89}[e.key];if(!step)return;e.preventDefault();const cells=$$('#validation-matrix i'),next=cells[cells.indexOf(cell)+step];if(next){cell.tabIndex=-1;next.tabIndex=0;next.focus();}});
+  }
   if ($('#workbench')) {
     let system='engine',stage=0;
     const systems={engine:{category:'ENTERPRISE RISK',title:'Make the model<br>your own.',intro:'An in-house risk engine, built with agents and validated against the vendor.',link:'calculation-engine.html',inputs:['BALANCE SHEET','RATE CURVES','CASH-FLOW RULES'],stages:[['Translate balance-sheet behavior, interest-rate scenarios and cash-flow rules into explicit calculation logic and acceptance criteria.','56','risk scenarios covered'],['Coordinate specialized agents for implementation and review, with persistent context, automated tests and clear completion criteria.','6 weeks','from concept to internal app'],['Benchmark each contract type against six historical monthly datasets; turn the result into a repeatable team workflow.','<0.1%','difference vs. vendor benchmark']]},poly:{category:'LIVE TRADING SYSTEMS',title:'Take a model<br>into the market.',intro:'Prediction-market infrastructure that connects payoff logic, live signals and execution.',link:'polymarket.html',inputs:['SPORTS RULES','LIVE EVENT DATA','ORDER BOOKS'],stages:[['Translate sports rules into deterministic payoff relationships. Enumerate legal outcomes to identify where related markets disagree.','3','sports: tennis, football & baseball'],['Build with Codex agents across research, implementation, boundary tests and code review. Connect live feeds to asynchronous execution.','4 layers','ingest · model · execute · reconcile'],['Reconcile fills and realized outcomes against closed-session records. Feed execution evidence back into the next iteration.','$16.7K','account net PnL · Aug 3–Oct 11']]}};

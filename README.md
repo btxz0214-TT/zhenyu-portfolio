@@ -5,7 +5,7 @@ A personal website about quantitative finance, AI-native engineering, and buildi
 ## Pages
 
 - **About** — background, career timeline, and an interactive project workflow.
-- **Calculation Engine** — overview of an agent-built financial modeling application; detailed case study forthcoming.
+- **Calculation Engine** — case study of an agent-built financial modeling application, including architecture, anonymized validation results, and development workflow.
 - **Constraint Atlas** — prediction-market strategies, engineering, and a historical performance snapshot.
 
 ## Resume
@@ -28,8 +28,8 @@ Built with HTML, CSS, and vanilla JavaScript. No build step or backend is requir
 
 - `index.html`, `calculation-engine.html`, `polymarket.html` — page content
 - `style.css` — shared responsive styles
-- `app.js` — interactive project workflow, performance charts, and strategy explorer
-- `data.js` — historical performance snapshot
+- `app.js` — yield-curve scenarios, interactive project workflow, validation matrix, performance charts, and strategy explorer
+- `data.js` — historical performance snapshot and anonymized validation buckets
 - `icon.svg` — site icon
 
 Google Fonts is optional; system fallback fonts are provided. Motion respects the reduced-motion preference.
