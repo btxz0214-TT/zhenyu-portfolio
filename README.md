@@ -8,6 +8,10 @@ A personal website about quantitative finance, AI-native engineering, and buildi
 - **Calculation Engine** — overview of an agent-built financial modeling application; detailed case study forthcoming.
 - **Constraint Atlas** — prediction-market strategies, engineering, and a historical performance snapshot.
 
+## Resume
+
+[Download the Citi AI Engineer resume (PDF)](resumes/Zhenyu_Xiao_Citi_AI_Engineer_Resume.pdf)
+
 ## Local preview
 
 Open `index.html` directly, or serve this directory:
