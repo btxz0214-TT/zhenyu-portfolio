@@ -1,6 +1,6 @@
 # ZHENYU XIAO
 
-New York, NY | btxz0214@gmail.com | +1 646 229 0812
+New York, NY | btxz0214@gmail.com | +1 646 229 0812 | [zhenyu-xiao.ai-builders.space](https://zhenyu-xiao.ai-builders.space/)
 
 ## PERSONAL SUMMARY
 
@@ -31,8 +31,6 @@ Analyze 12-/24-month Earnings at Risk (EaR) and Economic Value of Equity (EVE) a
 - Engineered an object-oriented NumPy/SciPy curve library for 54 curves over 30 years, using cubic-spline discount interpolation and vectorized shocks; now the engine’s discounting core.
 
 - Built AI-assisted ETL for 10+ monthly inputs with Microsoft Graph, Python/Excel automation and golden-source validation; cut preparation from 5 hours to 10 minutes.
-
-- Validated 100K+ balance-sheet records and 24-month forecasts; quantified curve, APR-cap and deposit-beta effects on earnings and economic-value risk.
 
 - Deployed a retrieval-augmented (RAG) Microsoft Copilot agent grounded in ~10 technical manuals for financial-software Q&A.
 
