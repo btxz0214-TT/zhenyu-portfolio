@@ -11,13 +11,14 @@
     const base=yrs=>3.3+1.3*(1-Math.exp(-yrs/4)),MAX=9;let hot=0;
     function highlight(){const id=order[hot],s=scenarios.find(x=>x[0]===id);$$('#hero-curve .hot').forEach(e=>e.classList.remove('hot'));$$(`#hero-curve [data-id="${id}"]`).forEach(e=>e.classList.add('hot'));readout.textContent=s[1]?`${id} · ${s[1]>0?'+':'−'}${Math.abs(s[1])*100} bp`:'BASE · no shock';readout.style.color=s[2];}
     function draw(){
-      const W=box.clientWidth,H=box.clientHeight,L=34,R=54,T=10,B=26,x=u=>L+u*(W-L-R),y=r=>T+(MAX-r)/MAX*(H-T-B);let g='';
+      // Stable SVG coordinates also work when the page starts in a hidden or unlaid-out tab.
+      const W=480,H=290,L=34,R=54,T=10,B=26,x=u=>L+u*(W-L-R),y=r=>T+(MAX-r)/MAX*(H-T-B);let g='';
       [0,3,6,9].forEach(r=>{g+=`<line x1="${L}" x2="${W-R}" y1="${y(r)}" y2="${y(r)}" stroke="#ffffff${r?'14':'33'}" ${r?'':'stroke-dasharray="3 4"'}/><text x="${L-8}" y="${y(r)+4}" text-anchor="end">${r}%</text>`;});
       [['3M',.25],['1Y',1],['5Y',5],['10Y',10],['30Y',30]].forEach(([l,yrs])=>{g+=`<text x="${x(Math.sqrt(yrs/30))}" y="${H-4}" text-anchor="middle">${l}</text>`;});
       const curves=scenarios.map(([id,s,c])=>{let d='';for(let i=0;i<=80;i++){const u=i/80,r=Math.max(0,base(30*u*u)+s);d+=`${i?'L':'M'}${x(u).toFixed(1)},${y(r).toFixed(1)} `;}const end=y(Math.max(0,base(30)+s));return `<path class="curve${s?'':' base'}" data-id="${id}" d="${d}" pathLength="1000" stroke="${c}" style="animation-delay:${Math.abs(s)*120}ms"/><text class="curve-label" data-id="${id}" x="${W-R+8}" y="${end+4}" style="fill:${c}">${id}</text>`;}).join('');
       box.innerHTML=`<svg viewBox="0 0 ${W} ${H}" aria-hidden="true">${g}${curves}<text x="${W-R}" y="${y(0)-6}" text-anchor="end">0% floor</text></svg>`;if(box.classList.contains('cycling'))highlight();
     }
-    draw();highlight();let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{box.classList.add('drawn');draw();},150);});
+    draw();highlight();
     if(!reduce)setTimeout(()=>{box.classList.add('cycling');highlight();setInterval(()=>{if(!document.hidden){hot=(hot+1)%order.length;highlight();}},1800);},1900);
   }
   if ($('[data-count]') && !reduce && 'IntersectionObserver' in window) {
