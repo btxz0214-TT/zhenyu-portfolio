@@ -39,3 +39,11 @@ Performance data is a static snapshot, not a live account connection. The equity
 ## Contact
 
 btxz0214@gmail.com
+
+## AI Builders deployment
+
+Public URL: https://zhenyu-xiao.ai-builders.space
+
+The root Dockerfile serves the site with Nginx on the runtime `PORT` (default 8000). Only website assets and the public Markdown resume are copied into the image. No application secrets are needed.
+
+Deployment settings are in `deploy-config.json`. After pushing changes to `main`, explicitly submit that configuration to `POST https://space.ai-builders.com/backend/v1/deployments` with your Builder token as a Bearer authorization header. Never put that token in this repository or in `env_vars`. A GitHub push alone does not redeploy the site.
