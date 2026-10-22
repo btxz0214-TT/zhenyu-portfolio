@@ -12,6 +12,10 @@ A personal website about quantitative finance, AI-native engineering, and buildi
 
 [Read the Citi AI Engineer resume (Markdown)](resumes/Zhenyu_Xiao_Citi_AI_Engineer_Resume.md)
 
+## Research and editing handoff
+
+[QR / QD / Trader resume review and ALM Engine editing brief](docs/research/quant-resume-review-and-alm-handoff.md) — public reference resumes, evidence boundaries, comparison findings, and instructions for strengthening the ALM case study and resume content.
+
 ## Local preview
 
 Open `index.html` directly, or serve this directory:
